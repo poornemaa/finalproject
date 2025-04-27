@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Certificate Download</title>
+  <!-- Bootstrap CSS (optional, for styling) -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- html2pdf.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f4f8;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    #certificate-container {
+      background-color: #fff;
+      border: 5px solid #4CAF50;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      width: 60%;
+      max-width: 700px;
+      text-align: center;
+    }
+    #certificate h1 {
+      font-size: 36px;
+      color: #4CAF50;
+    }
+    #certificate p {
+      font-size: 18px;
+      color: #333;
+      margin: 10px 0;
+    }
+    .button {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 5px;
+      transition: background-color 0.3s ease;
+      margin: 10px 5px 0 5px;
+    }
+    .button:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<script>
+// Role-based access control (frontend)
+const checkAccess = () => {
+  const userType = localStorage.getItem('user_type');
+  if (userType !== 'donor') {
+    alert("Access Denied: This page is only for donors.");
+    window.location.href = '/dashboard.html'; // redirect unauthorized users
+  }
+};
+
+// Call after navbar loads
+checkAccess();
+</script>
+<body>
+
+  <div id="certificate-container">
+    <div id="certificate">
+      <h1>Certificate of Appreciation</h1>
+      <p>Thank you for choosing to make a difference by donating food. Your generosity helps us fight food waste and hunger. Keep up the amazing work!</p>
+      <p>This certificate acknowledges your dedication to making the world a better place by donating food to those in need.</p>
+    </div>
+    <button id="download-button" class="button">Download Certificate</button>
+    <button id="dashboard-button" class="button">Back to Dashboard</button>
+  </div>
+
+  <!-- JavaScript -->
+  <script>
+    
+
+    document.getElementById("download-button").addEventListener("click", () => {
+      const certificate = document.getElementById("certificate-container");
+
+      const opt = {
+        margin:       0.5,
+        filename:     'Certificate_of_Appreciation.pdf',
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2 },
+        jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+      };
+
+      html2pdf().set(opt).from(certificate).save();
+    });
+
+    document.getElementById("dashboard-button").addEventListener("click", () => {
+      window.location.href = "dashboard.html";
+    });
+
+</script>
+
+</body>
+</html>

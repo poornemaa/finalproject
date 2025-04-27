@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Panel</title>
+  <link rel="stylesheet" href="css/admin-panel.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+  <nav class="navbar">
+    <h1>Admin Panel</h1>
+    <div class="nav-button">
+      <button onclick="logout()" class="btn btn-danger">Logout</button>
+    </div>
+  </nav>
+
+  <section class="dashboard">
+    <div class="container mt-5">
+      <h2 class="text-center mb-4">View Users</h2>
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover text-center" id="usersTable">
+          <thead class="table-dark">
+            <tr>
+              <th>UserID</th>
+              <th>Username</th>
+              <th>User Type</th>
+              <th>Email</th>
+              <th>Organization Name</th>
+              <th>Phone</th>
+              <th>Address</th>
+            </tr>
+          </thead>
+          <tbody id="usersTableBody">
+            <!-- Rows will be populated here by JavaScript -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+    
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        fetch('/api/admin/users')  // your API endpoint
+          .then(response => response.json())
+          .then(data => {
+            const tableBody = document.getElementById('usersTableBody');
+            data.forEach(user => {
+              const row = `
+                <tr>
+                  <td>${user.user_id}</td>
+                  <td>${user.username}</td>
+                  <td>${user.user_type}</td>
+                  <td>${user.email || '-'}</td>
+                  <td>${user.organization_name || '-'}</td>
+                  <td>${user.phone || '-'}</td>
+                  <td>${user.address || '-'}</td>
+                </tr>
+              `;
+              tableBody.innerHTML += row;
+            });
+          })
+          .catch(error => {
+            console.error('Error fetching users:', error);
+          });
+          
+      });
+    </script>
+    
+    <h2 class="text-center mt-4">View Food Donations</h2>
+
+<div class="container mt-4">
+  <table class="table table-striped table-bordered">
+    <thead class="table-dark">
+      <tr>
+        <th>Organization Name</th>
+        <th>Food Name</th>
+        <th>Description</th>
+        <th>Quantity</th>
+        <th>Status</th>
+        <th>Created At</th>
+      </tr>
+    </thead>
+    <tbody id="donationsTableBody">
+      <!-- Food donations will be inserted here -->
+    </tbody>
+  </table>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    fetch('/api/admin/food-donations')  // your API endpoint
+      .then(response => response.json())
+      .then(data => {
+        const tableBody = document.getElementById('donationsTableBody');
+        data.forEach(donation => {
+          const row = `
+            <tr>
+              <td>${donation.organization_name}</td>
+              <td>${donation.food_name}</td>
+              <td>${donation.food_description || '-'}</td>
+              <td>${donation.quantity}</td>
+              <td>${donation.status}</td>
+              <td>${new Date(donation.created_at).toLocaleString()}</td>
+            </tr>
+          `;
+          tableBody.innerHTML += row;
+        });
+      })
+      .catch(error => {
+        console.error('Error fetching food donations:', error);
+      });
+  });
+</script>
+
+
+    <h2>Orders</h2>
+    <div>
+    <table class="table table-striped table-bordered">
+      <thead class="table-dark">
+        <tr>
+          <th>Recipient Organization</th>
+          <th>Donor Organization</th>
+          <th>Food Name</th>
+          <th>Quantity</th>
+          <th>Order Date</th>
+        </tr>
+      </thead>
+      <tbody id="foodOrdersTableBody">
+        <!-- Food orders will be loaded here -->
+      </tbody>
+    </table>
+    </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        fetch('/api/admin/food-orders')  // your new API endpoint
+          .then(response => response.json())
+          .then(data => {
+            const tableBody = document.getElementById('foodOrdersTableBody');
+            data.forEach(order => {
+              const row = `
+                <tr>
+                  <td>${order.recipient_organization}</td>
+                  <td>${order.donor_organization}</td>
+                  <td>${order.food_name}</td>
+                  <td>${order.quantity}</td>
+                  <td>${new Date(order.order_date).toLocaleString()}</td>
+                </tr>
+              `;
+              tableBody.innerHTML += row;
+            });
+          })
+          .catch(error => {
+            console.error('Error fetching food orders:', error);
+          });
+      });
+    </script>
+    
+
+    <h2>Add New User</h2>
+<form id="addUserForm">
+  <div class="mb-3">
+    <label for="username" class="form-label">Username:</label>
+    <input type="text" id="username" class="form-control" required>
+  </div>
+  
+  <div class="mb-3">
+    <label for="email" class="form-label">Email:</label>
+    <input type="email" id="email" class="form-control" required>
+  </div>
+
+  <div class="mb-3">
+    <label for="password" class="form-label">Password:</label>
+    <input type="password" id="password" class="form-control" required>
+  </div>
+
+  <div class="mb-3">
+    <label for="user_type" class="form-label">User Type:</label>
+    <select id="user_type" class="form-select" required>
+      <option value="">Select Type</option>
+      <option value="donor">Donor</option>
+      <option value="recipient">Recipient</option>
+    </select>
+  </div>
+
+  <button type="submit" class="btn btn-primary">Add User</button>
+</form>
+
+<script>
+  document.getElementById('addUserForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const username = document.getElementById('username').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value.trim();
+    const user_type = document.getElementById('user_type').value;
+
+    fetch('/api/admin/add-user', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ username, email, password, user_type })
+    })
+    .then(response => response.json())
+    .then(data => {
+      alert(data.message);
+      // Clear form after successful submission
+      document.getElementById('addUserForm').reset();
+    })
+    .catch(error => {
+      console.error('Error adding user:', error);
+      alert('Failed to add user');
+    });
+  });
+</script>
+
+<div class="container mt-4">
+  <h3>Delete User by User ID</h3>
+  <div class="mb-3">
+    <label for="userIdInput" class="form-label">User ID</label>
+    <input type="number" class="form-control" id="userIdInput" placeholder="Enter User ID to delete">
+  </div>
+  <button class="btn btn-danger" onclick="deleteUserByInput()">Delete User</button>
+</div>
+
+<script>
+  function deleteUserByInput() {
+    const userId = document.getElementById('userIdInput').value.trim();
+
+    if (!userId) {
+      alert('Please enter a valid User ID');
+      return;
+    }
+
+    if (confirm(`Are you sure you want to delete User ID ${userId}?`)) {
+      fetch(`/api/admin/delete-user/${userId}`, {
+        method: 'DELETE'
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.error) {
+          alert(`Error: ${data.error}`);
+        } else {
+          alert(data.message);
+          document.getElementById('userIdInput').value = ''; // clear the input
+        }
+      })
+      .catch(error => {
+        console.error('Error deleting user:', error);
+        alert('Failed to delete user');
+      });
+    }
+  }
+</script>
+
+  </section>
+  <script>
+    function logout() {
+  localStorage.removeItem('admin_token');
+  localStorage.removeItem('admin_id');
+  localStorage.removeItem('admin_username');
+  window.location.href = 'index.html';
+}
+ </script>
+  
+
+</body>
+</html>

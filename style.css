@@ -1,0 +1,48 @@
+body {
+    background-color: #f8f9fa;
+  }
+  
+  h2 {
+    color: #343a40;
+  }
+  
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+  
+  /* style.css */
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1030; /* Ensure it's above other elements */
+}
+
+.table th, .table td {
+  text-align: center;
+  vertical-align: middle;
+}
+
+#dashboardStats .card {
+  border-left: 5px solid #28a745;
+  background-color: #f8f9fa;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease-in-out;
+}
+
+#dashboardStats .card:hover {
+  transform: translateY(-5px);
+}
+
+#dashboardStats .card-title {
+  font-size: 1.3rem;
+  color: #343a40;
+  margin-bottom: 10px;
+}
+
+#dashboardStats .stat-number {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #28a745;
+}
